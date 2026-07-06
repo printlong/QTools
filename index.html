@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel de Produção de Queijos</title>
+    <style>
+        /* Reset e Fontes Modernas */
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; 
+            background-color: #f4f6f8; 
+            color: #333; 
+            padding: 20px 15px; 
+        }
+
+        .container { 
+            max-width: 700px; 
+            margin: 0 auto; 
+            display: flex; 
+            flex-direction: column; 
+            gap: 20px; 
+        }
+
+        /* Estilo de Cartões (Cards) */
+        .card { 
+            background: #ffffff; 
+            border-radius: 12px; 
+            padding: 20px; 
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05); 
+        }
+        
+        .card-header { 
+            font-size: 1.2rem; 
+            font-weight: 600; 
+            margin-bottom: 15px; 
+            color: #1a1a1a; 
+            border-bottom: 2px solid #f0f0f0; 
+            padding-bottom: 10px;
+        }
+
+        /* Grid para Entradas */
+        .input-grid { 
+            display: grid; 
+            grid-template-columns: 1fr 1fr; 
+            gap: 15px; 
+        }
+        @media (max-width: 500px) {
+            .input-grid { grid-template-columns: 1fr; }
+        }
+
+        .input-group { display: flex; flex-direction: column; gap: 8px; }
+        .input-group label { font-size: 0.9rem; font-weight: 600; color: #555; }
+        
+        input[type="number"] { 
+            padding: 12px; 
+            border: 1px solid #ccd0d5; 
+            border-radius: 8px; 
+            font-size: 1rem; 
+            transition: border-color 0.2s;
+        }
+        input[type="number"]:focus { border-color: #0066ff; outline: none; }
+
+        /* Painel de Status Dinâmico */
+        .status-panel { 
+            text-align: center; 
+            padding: 25px 20px; 
+            border-radius: 12px; 
+            transition: all 0.3s ease;
+        }
+        .status-title { font-size: 1.4rem; font-weight: 700; margin-bottom: 8px; }
+        .status-subtitle { font-size: 1rem; font-weight: 500; opacity: 0.9; }
+
+        .status-sobra { background-color: #e6f4ea; color: #137333; border: 1px solid #ceead6; }
+        .status-falta { background-color: #fce8e6; color: #c5221f; border: 1px solid #fad2cf; }
+        .status-zerado { background-color: #e8f0fe; color: #1967d2; border: 1px solid #d2e3fc; }
+
+        /* Lista de Queijos */
+        .cheese-item { 
+            display: flex; 
+            align-items: center; 
+            justify-content: space-between; 
+            padding: 15px 0; 
+            border-bottom: 1px solid #f0f0f0; 
+            flex-wrap: wrap; 
+            gap: 15px;
+        }
+        .cheese-item:last-child { border-bottom: none; padding-bottom: 0; }
+        
+        .cheese-info { 
+            display: flex; 
+            align-items: center; 
+            gap: 12px; 
+            flex: 1; 
+            min-width: 220px;
+        }
+        
+        .cheese-info label { cursor: pointer; font-size: 1rem; font-weight: 500; display: flex; flex-direction: column;}
+        .cheese-info span.stock { font-size: 0.8rem; color: #888; font-weight: normal; margin-top: 2px;}
+        
+        input[type="radio"] { 
+            width: 22px; 
+            height: 22px; 
+            accent-color: #0066ff; 
+            cursor: pointer; 
+        }
+
+        /* Controles de Quantidade (+ e -) */
+        .qty-controls { 
+            display: flex; 
+            align-items: center; 
+            background: #f4f6f8; 
+            border-radius: 8px; 
+            padding: 4px;
+        }
+        .btn-qty { 
+            background: #fff; 
+            border: 1px solid #ddd; 
+            border-radius: 6px; 
+            width: 40px; 
+            height: 40px; 
+            font-size: 1.2rem; 
+            font-weight: bold; 
+            color: #333; 
+            cursor: pointer; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center;
+            transition: 0.1s;
+        }
+        .btn-qty:active { background: #e0e0e0; }
+        
+        /* --- CORREÇÃO DO BUG VISUAL AQUI --- */
+        .qty-input { 
+            width: 60px; 
+            padding: 0; /* Remove a margem interna excessiva */
+            text-align: center; 
+            border: none; 
+            background: transparent; 
+            font-weight: bold; 
+            font-size: 1.2rem;
+            -moz-appearance: textfield; /* Remove setas no Firefox */
+        }
+        .qty-input:focus { outline: none; }
+        
+        /* Remove setas nativas no Chrome, Safari, Edge e Mobile */
+        .qty-input::-webkit-outer-spin-button,
+        .qty-input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    
+    <div class="card">
+        <div class="card-header">Configuração do Lote</div>
+        <div class="input-grid">
+            <div class="input-group">
+                <label for="leite">Litros de Leite no Tanque</label>
+                <input type="number" id="leite" value="1500" step="1" oninput="atualizarCalculos()" inputmode="decimal">
+            </div>
+            <div class="input-group">
+                <label for="rendimento">Rendimento (Lts por 1kg de queijo)</label>
+                <input type="number" id="rendimento" value="10.0" step="0.1" oninput="atualizarCalculos()" inputmode="decimal">
+            </div>
+        </div>
+    </div>
+
+    <div class="status-panel status-sobra" id="panel_status">
+        <div class="status-title" id="lbl_status">Sobra de leite: 1500.0 Litros</div>
+        <div class="status-subtitle" id="lbl_quilos">Quilos Disponíveis Restantes: 150.0 kg</div>
+    </div>
+
+    <div class="card">
+        <div class="card-header">Produção (Selecione o Alvo)</div>
+        <div id="area_formas">
+            </div>
+    </div>
+
+</div>
+
+<script>
+    const queijosConfig = {
+        "redonda_1kg":   { nome: "Queijo Redondo (1.0 kg)", peso: 1.0, max: 42 },
+        "quadrada_05kg": { nome: "Queijo Retangular (0.5 kg)", peso: 0.5, max: 63 },
+        "1kg":           { nome: "Queijo Retangular (1.0 kg)", peso: 1.0, max: 26 },
+        "2kg":           { nome: "Queijo Retangular (2.0 kg)", peso: 2.0, max: 35 },
+        "3kg":           { nome: "Queijo Retangular (3.0 kg)", peso: 3.0, max: 8 }
+    };
+
+    const areaFormas = document.getElementById('area_formas');
+    for (const [chave, dados] of Object.entries(queijosConfig)) {
+        areaFormas.innerHTML += `
+            <div class="cheese-item">
+                <div class="cheese-info">
+                    <input type="radio" name="alvo" id="radio_${chave}" value="${chave}" onchange="atualizarCalculos()">
+                    <label for="radio_${chave}">
+                        ${dados.nome}
+                        <span class="stock">Limite do formato: ${dados.max} un.</span>
+                    </label>
+                </div>
+                <div class="qty-controls">
+                    <button class="btn-qty" onclick="alterarQtd('${chave}', -1)">-</button>
+                    <input type="number" class="qty-input" id="qtd_${chave}" value="0" min="0" max="${dados.max}" 
+                           oninput="validarInputManual('${chave}')" 
+                           onblur="if(this.value==='') { this.value='0'; atualizarCalculos(); }" 
+                           inputmode="numeric">
+                    <button class="btn-qty" onclick="alterarQtd('${chave}', 1)">+</button>
+                </div>
+            </div>
+        `;
+    }
+
+    function alterarQtd(chave, delta) {
+        const radioAlvo = document.querySelector('input[name="alvo"]:checked');
+        if (radioAlvo && radioAlvo.value === chave) return;
+
+        const input = document.getElementById(`qtd_${chave}`);
+        let valorAtual = parseInt(input.value) || 0;
+        let novoValor = valorAtual + delta;
+
+        if (novoValor < 0) novoValor = 0;
+        if (novoValor > queijosConfig[chave].max) novoValor = queijosConfig[chave].max;
+
+        input.value = novoValor;
+        atualizarCalculos();
+    }
+
+    function validarInputManual(chave) {
+        const input = document.getElementById(`qtd_${chave}`);
+        
+        // Se o usuário apagar o campo todo, aguarda a nova digitação sem forçar um "0" instantâneo
+        if (input.value === "") {
+            atualizarCalculos();
+            return;
+        }
+        
+        let valor = parseInt(input.value) || 0;
+        
+        if (valor < 0) input.value = 0;
+        if (valor > queijosConfig[chave].max) input.value = queijosConfig[chave].max;
+        
+        atualizarCalculos();
+    }
+
+    function atualizarCalculos() {
+        const leiteDisp = parseFloat(document.getElementById('leite').value) || 0;
+        const rend = parseFloat(document.getElementById('rendimento').value) || 10;
+        
+        const radioAlvo = document.querySelector('input[name="alvo"]:checked');
+        const alvo = radioAlvo ? radioAlvo.value : null;
+
+        if (alvo) {
+            let pesoOutros = 0;
+            for (const chave in queijosConfig) {
+                if (chave !== alvo) {
+                    const qtd = parseInt(document.getElementById(`qtd_${chave}`).value) || 0;
+                    pesoOutros += qtd * queijosConfig[chave].peso;
+                }
+            }
+
+            const leiteUsadoOutros = pesoOutros * rend;
+            const leiteRestanteAlvo = Math.max(0, leiteDisp - leiteUsadoOutros);
+            const leitePorUnidadeAlvo = queijosConfig[alvo].peso * rend;
+            
+            let qtdAlvoCalc = Math.floor(leiteRestanteAlvo / leitePorUnidadeAlvo);
+            
+            if (qtdAlvoCalc > queijosConfig[alvo].max) {
+                qtdAlvoCalc = queijosConfig[alvo].max;
+            }
+            
+            document.getElementById(`qtd_${alvo}`).value = qtdAlvoCalc;
+        }
+
+        let pesoTotalPlanejado = 0;
+        for (const chave in queijosConfig) {
+            const qtd = parseInt(document.getElementById(`qtd_${chave}`).value) || 0;
+            pesoTotalPlanejado += qtd * queijosConfig[chave].peso;
+        }
+
+        const leiteNecessario = pesoTotalPlanejado * rend;
+        const sobraLeite = leiteDisp - leiteNecessario;
+
+        const panelStatus = document.getElementById('panel_status');
+        const lblStatus = document.getElementById('lbl_status');
+        const lblQuilos = document.getElementById('lbl_quilos');
+
+        panelStatus.className = "status-panel"; 
+
+        if (sobraLeite >= 0) {
+            const quilosRestantes = sobraLeite / rend;
+            lblQuilos.innerText = `Quilos Disponíveis Restantes: ${quilosRestantes.toFixed(1)} kg`;
+        } else {
+            const quilosFaltantes = Math.abs(sobraLeite) / rend;
+            lblQuilos.innerText = `Faltam formas para: ${quilosFaltantes.toFixed(1)} kg (Excesso)`;
+        }
+
+        if (sobraLeite > 0) {
+            lblStatus.innerText = `Sobra de leite: ${sobraLeite.toFixed(1)} Litros`;
+            panelStatus.classList.add("status-sobra");
+        } else if (sobraLeite === 0) {
+            lblStatus.innerText = "Tanque zerado com perfeição! (0.0 L)";
+            panelStatus.classList.add("status-zerado");
+        } else {
+            lblStatus.innerText = `Falta de leite: ${Math.abs(sobraLeite).toFixed(1)} Litros!`;
+            panelStatus.classList.add("status-falta");
+        }
+    }
+
+    atualizarCalculos();
+</script>
+
+</body>
+</html>
