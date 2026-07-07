@@ -3,347 +3,198 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Painel de Produção de Queijos</title>
+    <title>Painel de Produção | Queijaria</title>
+    <!-- Tailwind CSS (Framework de Design Moderno) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Configuração de Cores Customizadas -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#2563eb', // Azul moderno
+                        primaryDark: '#1d4ed8',
+                        milk: '#f8fafc',
+                        success: '#10b981',
+                        warning: '#f59e0b',
+                        danger: '#ef4444',
+                    }
+                }
+            }
+        }
+    </script>
     <style>
-        /* Reset e Fontes Modernas */
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { 
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; 
-            background-color: #f4f6f8; 
-            color: #333; 
-            padding: 70px 15px 20px 15px; 
+        /* Oculta as setas nativas dos campos numéricos */
+        input[type="number"]::-webkit-inner-spin-button,
+        input[type="number"]::-webkit-outer-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
         }
-
-        /* Header Fixo */
-        .app-header {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 56px;
-            background-color: #ffffff;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0 16px;
-            z-index: 100;
+        input[type="number"] {
+            -moz-appearance: textfield;
         }
-
-        .menu-btn {
-            background: none;
-            border: none;
-            font-size: 1.6rem;
-            color: #333;
-            cursor: pointer;
-            width: 44px;
-            height: 44px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 50%;
-            transition: background-color 0.2s;
+        /* Animação suave para a barra de progresso */
+        .progress-bar {
+            transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.3s;
         }
-        .menu-btn:active { background-color: #f0f0f0; }
-
-        .app-title {
-            font-size: 1.15rem;
-            font-weight: 700;
-            color: #1a1a1a;
-            flex-grow: 1;
-            text-align: center;
-            margin-right: 44px; 
-        }
-
-        /* Container Principal */
-        .container { 
-            max-width: 700px; 
-            margin: 0 auto; 
-            display: flex; 
-            flex-direction: column; 
-            gap: 20px; 
-        }
-
-        /* Cartões */
-        .card { 
-            background: #ffffff; 
-            border-radius: 12px; 
-            padding: 20px; 
-            box-shadow: 0 4px 12px rgba(0,0,0,0.05); 
-        }
-        
-        .card-header { 
-            font-size: 1.1rem; 
-            font-weight: 600; 
-            margin-bottom: 15px; 
-            color: #1a1a1a; 
-            border-bottom: 2px solid #f0f0f0; 
-            padding-bottom: 10px;
-        }
-
-        .input-grid { 
-            display: grid; 
-            grid-template-columns: 1fr 1fr; 
-            gap: 15px; 
-        }
-        @media (max-width: 500px) {
-            .input-grid { grid-template-columns: 1fr; }
-        }
-
-        .input-group { display: flex; flex-direction: column; gap: 8px; }
-        .input-group label { font-size: 0.9rem; font-weight: 600; color: #555; }
-        
-        input[type="number"] { 
-            padding: 12px; 
-            border: 1px solid #ccd0d5; 
-            border-radius: 8px; 
-            font-size: 1rem; 
-        }
-        input[type="number"]:focus { border-color: #0066ff; outline: none; }
-
-        /* Painel de Status */
-        .status-panel { 
-            text-align: center; 
-            padding: 25px 20px; 
-            border-radius: 12px; 
-            transition: all 0.2s ease;
-        }
-        .status-title { font-size: 1.4rem; font-weight: 700; margin-bottom: 8px; }
-        .status-subtitle { font-size: 1rem; font-weight: 500; opacity: 0.9; }
-
-        .status-sobra { background-color: #e6f4ea; color: #137333; border: 1px solid #ceead6; }
-        .status-falta { background-color: #fce8e6; color: #c5221f; border: 1px solid #fad2cf; }
-        .status-zerado { background-color: #e8f0fe; color: #1967d2; border: 1px solid #d2e3fc; }
-
-        /* Lista de Queijos */
-        .cheese-item { 
-            display: flex; 
-            align-items: center; 
-            justify-content: space-between; 
-            padding: 15px 0; 
-            border-bottom: 1px solid #f0f0f0; 
-            flex-wrap: wrap; 
-            gap: 15px;
-        }
-        .cheese-item:last-child { border-bottom: none; padding-bottom: 0; }
-        
-        .cheese-info { 
-            display: flex; 
-            align-items: center; 
-            gap: 12px; 
-            flex: 1; 
-            min-width: 220px;
-        }
-        
-        .cheese-info label { cursor: pointer; font-size: 1rem; font-weight: 500; display: flex; flex-direction: column;}
-        .cheese-info span.stock { font-size: 0.8rem; color: #888; font-weight: normal; margin-top: 2px;}
-        
-        input[type="radio"] { 
-            width: 22px; 
-            height: 22px; 
-            accent-color: #0066ff; 
-            cursor: pointer; 
-        }
-
-        /* Controles de Quantidade */
-        .qty-controls { 
-            display: flex; 
-            align-items: center; 
-            background: #f4f6f8; 
-            border-radius: 8px; 
-            padding: 4px;
-        }
-        .btn-qty { 
-            background: #fff; 
-            border: 1px solid #ddd; 
-            border-radius: 6px; 
-            width: 40px; 
-            height: 40px; 
-            font-size: 1.2rem; 
-            font-weight: bold; 
-            color: #333; 
-            cursor: pointer; 
-            display: flex; 
-            align-items: center; 
-            justify-content: center;
-        }
-        .btn-qty:active { background: #e0e0e0; }
-        
-        .qty-input { 
-            width: 60px; 
-            padding: 0; 
-            text-align: center; 
-            border: none; 
-            background: transparent; 
-            font-weight: bold; 
-            font-size: 1.2rem;
-            -moz-appearance: textfield; 
-        }
-        .qty-input:focus { outline: none; }
-        .qty-input::-webkit-outer-spin-button, .qty-input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
-
-        /* --- MENU LATERAL (SIDEBAR) --- */
-        .sidebar {
-            position: fixed;
-            top: 0;
-            left: -320px; 
-            width: 300px;
-            height: 100%;
-            background-color: #ffffff;
-            box-shadow: 4px 0 15px rgba(0,0,0,0.15);
-            z-index: 200;
-            transition: left 0.3s cubic-bezier(0.1, 0.9, 0.2, 1);
-            display: flex;
-            flex-direction: column;
-            padding: 20px;
-        }
-
-        .sidebar.open { left: 0; }
-
-        .sidebar-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0,0,0,0.4);
-            z-index: 150;
-            display: none;
-            backdrop-filter: blur(2px);
-        }
-        .sidebar-overlay.active { display: block; }
-
-        .sidebar-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 25px;
-            padding-bottom: 15px;
-            border-bottom: 1px solid #f0f0f0;
-        }
-
-        .sidebar-title { font-size: 1.25rem; font-weight: 700; color: #1a1a1a; }
-
-        .close-btn {
-            background: none;
-            border: none;
-            font-size: 1.5rem;
-            color: #888;
-            cursor: pointer;
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .config-form {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-            overflow-y: auto;
-            flex-grow: 1;
-        }
-
-        .config-item { display: flex; flex-direction: column; gap: 6px; }
-        .config-item label { font-size: 0.85rem; font-weight: 600; color: #555; }
-        .config-item input { padding: 10px; border: 1px solid #ddd; border-radius: 8px; font-size: 1rem; width: 100%; }
-
-        .sidebar-actions { margin-top: 20px; display: flex; flex-direction: column; gap: 10px; }
-        .btn-primary { background-color: #0066ff; color: #fff; border: none; border-radius: 8px; padding: 12px; font-size: 1rem; font-weight: 600; cursor: pointer; }
-        .btn-primary:active { background-color: #0052cc; }
-        .btn-secondary { background-color: #f4f6f8; color: #555; border: 1px solid #ddd; border-radius: 8px; padding: 12px; font-size: 0.95rem; font-weight: 600; cursor: pointer; }
+        /* Scrollbar customizada para o menu */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
     </style>
 </head>
-<body>
+<body class="bg-slate-100 text-slate-800 font-sans antialiased pb-24 pt-20 selection:bg-primary selection:text-white">
 
-<header class="app-header">
-    <button class="menu-btn" onclick="abrirMenu()">☰</button>
-    <h1 class="app-title">Painel de Queijos</h1>
-</header>
-
-<div class="sidebar-overlay" id="overlay" onclick="fecharMenu()"></div>
-<div class="sidebar" id="sidebar">
-    <div class="sidebar-header">
-        <h2 class="sidebar-title">Configurar Pesos</h2>
-        <button class="close-btn" onclick="fecharMenu()">✕</button>
-    </div>
-    
-    <div class="config-form">
-        <p style="font-size: 0.85rem; color: #666; margin-bottom: 10px; line-height: 1.4;">
-            Ajuste o peso médio real que cada formato suporta em sua produção (em gramas):
-        </p>
-        
-        <div class="config-item">
-            <label for="weight_redonda_1kg">Queijo Redondo (1kg padrão)</label>
-            <input type="number" id="weight_redonda_1kg" min="1" step="1" inputmode="numeric">
-        </div>
-        
-        <div class="config-item">
-            <label for="weight_quadrada_05kg">Queijo Retangular (0.5kg padrão)</label>
-            <input type="number" id="weight_quadrada_05kg" min="1" step="1" inputmode="numeric">
-        </div>
-        
-        <div class="config-item">
-            <label for="weight_1kg">Queijo Retangular (1.0kg padrão)</label>
-            <input type="number" id="weight_1kg" min="1" step="1" inputmode="numeric">
-        </div>
-        
-        <div class="config-item">
-            <label for="weight_2kg">Queijo Retangular (2.0kg padrão)</label>
-            <input type="number" id="weight_2kg" min="1" step="1" inputmode="numeric">
-        </div>
-        
-        <div class="config-item">
-            <label for="weight_3kg">Queijo Retangular (3.0kg padrão)</label>
-            <input type="number" id="weight_3kg" min="1" step="1" inputmode="numeric">
-        </div>
-    </div>
-
-    <div class="sidebar-actions">
-        <button class="btn-primary" onclick="salvarConfiguracoes()">Salvar Configurações</button>
-        <button class="btn-secondary" onclick="restaurarPadroes()">Restaurar Padrões</button>
-    </div>
-</div>
-
-<div class="container">
-    <div class="card">
-        <div class="card-header">Configuração do Lote</div>
-        <div class="input-grid">
-            <div class="input-group">
-                <label for="leite">Litros de Leite no Tanque</label>
-                <input type="number" id="leite" value="1500" step="1" oninput="atualizarCalculos()" inputmode="decimal">
+    <!-- Header Fixo -->
+    <header class="fixed top-0 left-0 w-full bg-white shadow-sm z-40 border-b border-slate-200">
+        <div class="max-w-3xl mx-auto px-4 h-16 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="bg-primary/10 p-2 rounded-lg text-primary">
+                    <i data-lucide="milk" class="w-6 h-6"></i>
+                </div>
+                <h1 class="text-xl font-bold text-slate-900 tracking-tight">Queijaria<span class="text-primary">Pro</span></h1>
             </div>
-            <div class="input-group">
-                <label for="rendimento">Rendimento (Lts por 1kg de queijo)</label>
-                <input type="number" id="rendimento" value="10.0" step="0.1" oninput="atualizarCalculos()" inputmode="decimal">
-            </div>
+            <button onclick="toggleSidebar(true)" class="p-2 -mr-2 text-slate-500 hover:text-primary hover:bg-slate-50 rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-primary/20">
+                <i data-lucide="settings" class="w-6 h-6"></i>
+            </button>
         </div>
+    </header>
+
+    <!-- Overlay do Menu -->
+    <div id="sidebarOverlay" onclick="toggleSidebar(false)" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 hidden opacity-0 transition-opacity duration-300"></div>
+
+    <!-- Menu Lateral (Sidebar de Configurações) -->
+    <aside id="sidebar" class="fixed top-0 right-0 h-full w-full sm:w-96 bg-white shadow-2xl z-50 transform translate-x-full transition-transform duration-300 ease-in-out flex flex-col">
+        <div class="flex items-center justify-between p-6 border-b border-slate-100">
+            <div class="flex items-center gap-2 text-slate-800">
+                <i data-lucide="scale" class="w-5 h-5 text-primary"></i>
+                <h2 class="text-lg font-bold">Pesos Reais (Gramas)</h2>
+            </div>
+            <button onclick="toggleSidebar(false)" class="p-2 text-slate-400 hover:text-danger hover:bg-red-50 rounded-full transition-colors">
+                <i data-lucide="x" class="w-5 h-5"></i>
+            </button>
+        </div>
+        
+        <div class="flex-1 overflow-y-auto p-6 space-y-5" id="configForm">
+            <p class="text-sm text-slate-500 leading-relaxed bg-slate-50 p-4 rounded-lg border border-slate-100">
+                Defina a média real de peso (em gramas) que cada forma física suporta na sua produção para garantir precisão no cálculo.
+            </p>
+            <!-- Campos gerados dinamicamente via JS -->
+        </div>
+
+        <div class="p-6 border-t border-slate-100 bg-slate-50 space-y-3">
+            <button onclick="salvarConfiguracoes()" class="w-full flex items-center justify-center gap-2 bg-primary hover:bg-primaryDark text-white font-semibold py-3 px-4 rounded-xl transition-all shadow-md shadow-primary/20 active:scale-[0.98]">
+                <i data-lucide="save" class="w-5 h-5"></i>
+                Salvar Configurações
+            </button>
+            <button onclick="restaurarPadroes()" class="w-full text-sm font-medium text-slate-500 hover:text-slate-800 py-2 transition-colors">
+                Restaurar pesos de fábrica
+            </button>
+        </div>
+    </aside>
+
+    <!-- Notificação Toast -->
+    <div id="toast" class="fixed bottom-5 left-1/2 transform -translate-x-1/2 bg-slate-800 text-white px-6 py-3 rounded-full shadow-2xl z-50 flex items-center gap-3 transition-all duration-300 translate-y-20 opacity-0">
+        <i data-lucide="check-circle-2" class="w-5 h-5 text-success"></i>
+        <span class="font-medium text-sm" id="toastMessage">Salvo com sucesso!</span>
     </div>
 
-    <div class="status-panel status-sobra" id="panel_status">
-        <div class="status-title" id="lbl_status">Sobra de leite: 0.0 Litros</div>
-        <div class="status-subtitle" id="lbl_quilos">Quilos Disponíveis Restantes: 0.0 kg</div>
-    </div>
+    <!-- Container Principal -->
+    <main class="max-w-3xl mx-auto px-4 space-y-6">
+        
+        <!-- Dashboard do Tanque -->
+        <section class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 relative overflow-hidden">
+            <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-primary to-blue-400"></div>
+            
+            <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-6">
+                <div>
+                    <h2 class="text-slate-500 text-sm font-semibold uppercase tracking-wider mb-1">Status do Tanque</h2>
+                    <div class="flex items-baseline gap-2">
+                        <span id="lbl_sobra_litros" class="text-4xl font-extrabold text-slate-800">0.0</span>
+                        <span class="text-slate-500 font-medium">L disponíveis</span>
+                    </div>
+                    <div id="badge_quilos_container" class="inline-flex items-center gap-1.5 px-2 py-1 mt-2 bg-primary/10 text-primary rounded-md font-bold text-xs">
+                        <i data-lucide="scale" class="w-3 h-3"></i>
+                        <span id="lbl_quilos">Rende + 0.0 kg</span>
+                    </div>
+                </div>
+                <div class="text-left sm:text-right">
+                    <p class="text-sm text-slate-500 mb-1">Produção Estimada</p>
+                    <div class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-emerald-50 text-emerald-700 rounded-lg font-bold border border-emerald-100">
+                        <i data-lucide="package" class="w-4 h-4"></i>
+                        <span id="lbl_estimativa_kg">0.0 kg</span>
+                    </div>
+                </div>
+            </div>
 
-    <div class="card">
-        <div class="card-header">Produção (Selecione o Alvo)</div>
-        <div id="area_formas"></div>
-    </div>
-</div>
+            <!-- Barra de Progresso Visual -->
+            <div class="space-y-2">
+                <div class="flex justify-between text-xs font-semibold text-slate-500 px-1">
+                    <span>0L</span>
+                    <span id="lbl_uso_percentual">0% Utilizado</span>
+                    <span id="lbl_tanque_total">1500L</span>
+                </div>
+                <div class="w-full bg-slate-100 h-4 rounded-full overflow-hidden shadow-inner">
+                    <div id="progress_bar" class="h-full progress-bar bg-primary rounded-full relative" style="width: 0%;">
+                        <div class="absolute inset-0 bg-white/20 w-full progress-bar" style="background-image: linear-gradient(45deg,rgba(255,255,255,.15) 25%,transparent 25%,transparent 50%,rgba(255,255,255,.15) 50%,rgba(255,255,255,.15) 75%,transparent 75%,transparent); background-size: 1rem 1rem;"></div>
+                    </div>
+                </div>
+                <p id="lbl_status_msg" class="text-center text-sm font-medium mt-3 text-primary transition-colors"></p>
+            </div>
+        </section>
+
+        <!-- Configuração Inicial -->
+        <section class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 focus-within:ring-2 focus-within:ring-primary/20 focus-within:border-primary transition-all">
+                <label class="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-2">Leite no Tanque (Litros)</label>
+                <div class="flex items-center gap-3">
+                    <div class="p-2 bg-slate-50 rounded-lg text-slate-400"><i data-lucide="droplets" class="w-5 h-5"></i></div>
+                    <input type="number" id="leite" value="1500" step="1" oninput="atualizarCalculos()" inputmode="decimal" class="w-full text-xl font-bold text-slate-800 bg-transparent border-none p-0 focus:ring-0">
+                </div>
+            </div>
+            <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 focus-within:ring-2 focus-within:ring-primary/20 focus-within:border-primary transition-all">
+                <label class="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-2">Rendimento (Lts/Kg)</label>
+                <div class="flex items-center gap-3">
+                    <div class="p-2 bg-slate-50 rounded-lg text-slate-400"><i data-lucide="pie-chart" class="w-5 h-5"></i></div>
+                    <input type="number" id="rendimento" value="10.0" step="0.1" oninput="atualizarCalculos()" inputmode="decimal" class="w-full text-xl font-bold text-slate-800 bg-transparent border-none p-0 focus:ring-0">
+                </div>
+            </div>
+        </section>
+
+        <!-- Lista de Produção -->
+        <section>
+            <div class="flex items-center justify-between mb-4 px-1">
+                <h3 class="font-bold text-slate-800 text-lg">Distribuição de Formas</h3>
+                <span class="text-xs font-medium text-slate-500 bg-slate-200/60 px-2 py-1 rounded-md" id="contadorFormas">0 moldes</span>
+            </div>
+            
+            <div id="area_formas" class="space-y-4">
+                <!-- Gerado dinamicamente -->
+            </div>
+        </section>
+
+        <!-- Ações Inferiores -->
+        <div class="pt-4 flex justify-center pb-8">
+            <button onclick="limparLote()" class="flex items-center gap-2 text-slate-400 hover:text-danger font-semibold py-2 px-6 rounded-full hover:bg-red-50 transition-colors">
+                <i data-lucide="trash-2" class="w-4 h-4"></i>
+                Zerar toda a produção
+            </button>
+        </div>
+
+    </main>
 
 <script>
-    // Configuração estrutural fixa das formas
+    // Configuração Estrutural
     const queijosConfig = {
-        "redonda_1kg":   { nome: "Queijo Redondo (1.0 kg)", max: 42 },
-        "quadrada_05kg": { nome: "Queijo Retangular (0.5 kg)", max: 63 },
-        "1kg":           { nome: "Queijo Retangular (1.0 kg)", max: 26 },
-        "2kg":           { nome: "Queijo Retangular (2.0 kg)", max: 35 },
-        "3kg":           { nome: "Queijo Retangular (3.0 kg)", max: 8 }
+        "redonda_1kg":   { nome: "Queijo Redondo", formato: "1kg", max: 42, icone: "circle" },
+        "quadrada_05kg": { nome: "Queijo Retangular", formato: "0.5kg", max: 63, icone: "square" },
+        "1kg":           { nome: "Queijo Retangular", formato: "1.0kg", max: 26, icone: "layout-grid" },
+        "2kg":           { nome: "Queijo Retangular", formato: "2.0kg", max: 35, icone: "box" },
+        "3kg":           { nome: "Queijo Retangular", formato: "3.0kg", max: 8, icone: "boxes" }
     };
 
-    // Médias reais em gramas enviadas por você para início automático do sistema
     const pesosPadroes = {
         "redonda_1kg": 875,     
         "quadrada_05kg": 550,   
@@ -352,54 +203,123 @@
         "3kg": 2750             
     };
 
-    // Carrega do banco local do navegador ou assume os padrões acima
-    let pesosConfigurados = JSON.parse(localStorage.getItem('pesos_queijos_config_v2')) || { ...pesosPadroes };
-
+    let pesosConfigurados = JSON.parse(localStorage.getItem('queijaria_pro_pesos')) || { ...pesosPadroes };
     let ultimoAlvoMarcado = null;
 
-    // Renderização dos cards de queijo na tela inicial
-    const areaFormas = document.getElementById('area_formas');
-    for (const [chave, dados] of Object.entries(queijosConfig)) {
-        areaFormas.innerHTML += `
-            <div class="cheese-item" id="item_${chave}">
-                <div class="cheese-info">
-                    <input type="radio" name="alvo" id="radio_${chave}" value="${chave}" onclick="lidarComCliqueAlvo(this)">
-                    <label for="radio_${chave}">
-                        ${dados.nome}
-                        <span class="stock">Limite do formato: ${dados.max} un.</span>
+    // Inicializa Lucide Icons
+    lucide.createIcons();
+
+    // Renderização Dinâmica da Interface
+    function inicializarUI() {
+        const areaFormas = document.getElementById('area_formas');
+        const configForm = document.getElementById('configForm');
+        areaFormas.innerHTML = '';
+        configForm.innerHTML = configForm.firstElementChild.outerHTML; // Mantém o texto de ajuda
+
+        for (const [chave, dados] of Object.entries(queijosConfig)) {
+            // Cartões Principais
+            areaFormas.innerHTML += `
+                <div class="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm transition-all duration-300 hover:shadow-md relative overflow-hidden" id="card_${chave}">
+                    
+                    <!-- Faixa indicadora de Alvo -->
+                    <div id="target_indicator_${chave}" class="absolute left-0 top-0 bottom-0 w-1.5 bg-primary transform scale-y-0 transition-transform duration-300 origin-top"></div>
+
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pl-2">
+                        <div class="flex items-center gap-4">
+                            <div class="w-12 h-12 rounded-xl bg-slate-50 flex items-center justify-center text-slate-400 border border-slate-100">
+                                <i data-lucide="${dados.icone}" class="w-6 h-6"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-slate-800 text-[1.05rem] leading-tight">${dados.nome}</h4>
+                                <div class="flex items-center gap-2 mt-1">
+                                    <span class="text-xs font-bold text-primary bg-primary/10 px-2 py-0.5 rounded text-center">${dados.formato}</span>
+                                    <span class="text-xs text-slate-500 font-medium">Máx: ${dados.max} un.</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-center justify-between sm:justify-end gap-6 border-t border-slate-100 sm:border-none pt-4 sm:pt-0 mt-2 sm:mt-0">
+                            
+                            <!-- Toggle Automático -->
+                            <button onclick="lidarComCliqueAlvo('${chave}')" id="btn_alvo_${chave}" 
+                                class="flex flex-col items-center gap-1 group w-16">
+                                <div id="track_${chave}" class="w-10 h-5 bg-slate-200 rounded-full relative transition-colors duration-300">
+                                    <div id="thumb_${chave}" class="absolute left-0.5 top-0.5 w-4 h-4 bg-white rounded-full shadow-sm transition-transform duration-300 transform translate-x-0"></div>
+                                </div>
+                                <span class="text-[0.65rem] font-bold text-slate-400 uppercase tracking-wide group-hover:text-primary transition-colors" id="lbl_alvo_${chave}">Manual</span>
+                            </button>
+
+                            <!-- Controles (+ e -) -->
+                            <div class="flex items-center bg-slate-50 border border-slate-200 rounded-xl p-1 transition-opacity duration-300" id="controls_${chave}">
+                                <button onclick="alterarQtd('${chave}', -1)" class="w-10 h-10 flex items-center justify-center text-slate-600 hover:bg-white hover:shadow-sm rounded-lg transition-all active:scale-95 disabled:opacity-30 disabled:hover:bg-transparent">
+                                    <i data-lucide="minus" class="w-4 h-4"></i>
+                                </button>
+                                <input type="number" id="qtd_${chave}" value="${dados.max}" min="0" max="${dados.max}" 
+                                    oninput="validarInputManual('${chave}')" 
+                                    onblur="if(this.value==='') { this.value='0'; atualizarCalculos(); }" 
+                                    inputmode="numeric"
+                                    class="w-12 text-center bg-transparent border-none text-lg font-bold text-slate-800 p-0 focus:ring-0">
+                                <button onclick="alterarQtd('${chave}', 1)" class="w-10 h-10 flex items-center justify-center text-slate-600 hover:bg-white hover:shadow-sm rounded-lg transition-all active:scale-95 disabled:opacity-30 disabled:hover:bg-transparent">
+                                    <i data-lucide="plus" class="w-4 h-4"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            // Inputs do Menu Lateral
+            configForm.innerHTML += `
+                <div class="space-y-1.5">
+                    <label for="weight_${chave}" class="text-sm font-semibold text-slate-700 flex justify-between">
+                        ${dados.nome} <span class="text-primary font-bold text-xs bg-primary/10 px-1.5 py-0.5 rounded">${dados.formato}</span>
                     </label>
+                    <div class="relative">
+                        <input type="number" id="weight_${chave}" min="1" step="1" inputmode="numeric" 
+                            class="w-full bg-white border border-slate-200 text-slate-800 font-medium rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all">
+                        <span class="absolute right-4 top-3.5 text-sm font-bold text-slate-400">g</span>
+                    </div>
                 </div>
-                <div class="qty-controls" id="controls_${chave}">
-                    <button class="btn-qty" onclick="alterarQtd('${chave}', -1)">-</button>
-                    <input type="number" class="qty-input" id="qtd_${chave}" value="${dados.max}" min="0" max="${dados.max}" 
-                           oninput="validarInputManual('${chave}')" 
-                           onblur="if(this.value==='') { this.value='0'; atualizarCalculos(); }" 
-                           inputmode="numeric">
-                    <button class="btn-qty" onclick="alterarQtd('${chave}', 1)">+</button>
-                </div>
-            </div>
-        `;
+            `;
+        }
+        
+        lucide.createIcons();
+        preencherCamposConfig();
+        atualizarCalculos();
     }
 
+    // Controle de Gaveta e UI Secundária
+    function toggleSidebar(show) {
+        const sidebar = document.getElementById('sidebar');
+        const overlay = document.getElementById('sidebarOverlay');
+        if (show) {
+            preencherCamposConfig();
+            sidebar.classList.remove('translate-x-full');
+            overlay.classList.remove('hidden');
+            setTimeout(() => overlay.classList.remove('opacity-0'), 10);
+        } else {
+            sidebar.classList.add('translate-x-full');
+            overlay.classList.add('opacity-0');
+            setTimeout(() => overlay.classList.add('hidden'), 300);
+        }
+    }
+
+    function showToast(message) {
+        const toast = document.getElementById('toast');
+        document.getElementById('toastMessage').innerText = message;
+        toast.classList.remove('translate-y-20', 'opacity-0');
+        setTimeout(() => {
+            toast.classList.add('translate-y-20', 'opacity-0');
+        }, 3000);
+    }
+
+    // Lógica de Persistência
     function preencherCamposConfig() {
         for (const chave in pesosConfigurados) {
             const field = document.getElementById(`weight_${chave}`);
             if (field) field.value = pesosConfigurados[chave];
         }
     }
-
-    function abrirMenu() {
-        preencherCamposConfig();
-        document.getElementById('sidebar').classList.add('open');
-        document.getElementById('overlay').classList.add('active');
-    }
-
-    styleMenu = function(open) {
-        document.getElementById('sidebar').classList[open ? 'add' : 'remove']('open');
-        document.getElementById('overlay').classList[open ? 'add' : 'remove']('active');
-    }
-    function fecharMenu() { styleMenu(false); }
-    function abrirMenu() { preencherCamposConfig(); styleMenu(true); }
 
     function salvarConfiguracoes() {
         for (const chave in pesosConfigurados) {
@@ -409,8 +329,9 @@
                 if (val && val > 0) pesosConfigurados[chave] = val;
             }
         }
-        localStorage.setItem('pesos_queijos_config_v2', JSON.stringify(pesosConfigurados));
-        fecharMenu();
+        localStorage.setItem('queijaria_pro_pesos', JSON.stringify(pesosConfigurados));
+        toggleSidebar(false);
+        showToast("Pesos atualizados com sucesso!");
         atualizarCalculos();
     }
 
@@ -419,27 +340,21 @@
         preencherCamposConfig();
     }
 
-    function lidarComCliqueAlvo(radio) {
-        if (ultimoAlvoMarcado === radio) {
-            radio.checked = false;
-            ultimoAlvoMarcado = null;
+    // Controles Manuais e Alvo
+    function lidarComCliqueAlvo(chave) {
+        if (ultimoAlvoMarcado === chave) {
+            ultimoAlvoMarcado = null; // Desmarca se clicar de novo no mesmo
         } else {
-            ultimoAlvoMarcado = radio;
+            ultimoAlvoMarcado = chave;
         }
         atualizarCalculos();
     }
 
     function alterarQtd(chave, delta) {
-        const radioAlvo = document.querySelector('input[name="alvo"]:checked');
-        if (radioAlvo && radioAlvo.value === chave) return;
-
+        if (ultimoAlvoMarcado === chave) return; // Bloqueado se for alvo
         const input = document.getElementById(`qtd_${chave}`);
         let valorAtual = parseInt(input.value) || 0;
-        let novoValor = valorAtual + delta;
-
-        if (novoValor < 0) novoValor = 0;
-        if (novoValor > queijosConfig[chave].max) novoValor = queijosConfig[chave].max;
-
+        let novoValor = Math.max(0, Math.min(valorAtual + delta, queijosConfig[chave].max));
         input.value = novoValor;
         atualizarCalculos();
     }
@@ -448,106 +363,163 @@
         const input = document.getElementById(`qtd_${chave}`);
         if (input.value === "") { atualizarCalculos(); return; }
         let valor = parseInt(input.value) || 0;
-        if (valor < 0) input.value = 0;
-        if (valor > queijosConfig[chave].max) input.value = queijosConfig[chave].max;
+        input.value = Math.max(0, Math.min(valor, queijosConfig[chave].max));
         atualizarCalculos();
     }
 
-    // LÓGICA DE CÁLCULO TOTALMENTE CORRIGIDA E SINCRONIZADA
+    function limparLote() {
+        if(confirm("Tem certeza que deseja zerar todas as formas preenchidas?")) {
+            ultimoAlvoMarcado = null;
+            for (const chave in queijosConfig) {
+                document.getElementById(`qtd_${chave}`).value = 0;
+            }
+            atualizarCalculos();
+            showToast("Lote reiniciado.");
+        }
+    }
+
+    // NÚCLEO MATEMÁTICO E ATUALIZAÇÃO VISUAL
     function atualizarCalculos() {
         const leiteDisp = parseFloat(document.getElementById('leite').value) || 0;
         const rend = parseFloat(document.getElementById('rendimento').value) || 10;
-        
-        const radioAlvo = document.querySelector('input[name="alvo"]:checked');
-        const alvo = radioAlvo ? radioAlvo.value : null;
+        let totalFormasUsadas = 0;
 
-        // 1. Bloqueia visualmente o campo que for o Alvo do cálculo automático
+        // Atualiza a UI dos switches (Toggles) e bloqueios
         for (const chave in queijosConfig) {
+            const ehAlvo = (chave === ultimoAlvoMarcado);
             const input = document.getElementById(`qtd_${chave}`);
             const controls = document.getElementById(`controls_${chave}`);
             const btnMenos = controls.firstElementChild;
             const btnMais = controls.lastElementChild;
+            const card = document.getElementById(`card_${chave}`);
             
-            if (chave === alvo) {
+            // UI do Switch
+            const track = document.getElementById(`track_${chave}`);
+            const thumb = document.getElementById(`thumb_${chave}`);
+            const lblAlvo = document.getElementById(`lbl_alvo_${chave}`);
+            const indicador = document.getElementById(`target_indicator_${chave}`);
+
+            if (ehAlvo) {
+                // Estado LIGADO (Automático)
+                track.classList.replace('bg-slate-200', 'bg-primary');
+                thumb.classList.replace('translate-x-0', 'translate-x-5');
+                lblAlvo.innerText = "Automático";
+                lblAlvo.classList.add('text-primary');
+                indicador.classList.replace('scale-y-0', 'scale-y-100');
+                card.classList.add('border-primary/30', 'bg-primary/[0.02]');
+                
+                // Bloqueia input
                 input.readOnly = true;
-                controls.style.opacity = '0.5';
-                btnMenos.style.pointerEvents = 'none';
-                btnMais.style.pointerEvents = 'none';
+                controls.classList.add('opacity-40');
+                btnMenos.disabled = true;
+                btnMais.disabled = true;
             } else {
+                // Estado DESLIGADO (Manual)
+                track.classList.replace('bg-primary', 'bg-slate-200');
+                thumb.classList.replace('translate-x-5', 'translate-x-0');
+                lblAlvo.innerText = "Manual";
+                lblAlvo.classList.remove('text-primary');
+                indicador.classList.replace('scale-y-100', 'scale-y-0');
+                card.classList.remove('border-primary/30', 'bg-primary/[0.02]');
+                
+                // Desbloqueia input
                 input.readOnly = false;
-                controls.style.opacity = '1';
-                btnMenos.style.pointerEvents = 'auto';
-                btnMais.style.pointerEvents = 'auto';
+                controls.classList.remove('opacity-40');
+                btnMenos.disabled = false;
+                btnMais.disabled = false;
             }
         }
 
-        // 2. Se houver alvo, calcula primeiro o peso de todos os OUTROS usando o valor real de gramas
-        if (alvo) {
+        // Cálculo de Compensação (Alvo)
+        if (ultimoAlvoMarcado) {
             let pesoOutrosKg = 0;
             for (const chave in queijosConfig) {
-                if (chave !== alvo) {
+                if (chave !== ultimoAlvoMarcado) {
                     const qtd = parseInt(document.getElementById(`qtd_${chave}`).value) || 0;
-                    const pesoIndividualKg = (pesosConfigurados[chave] || 1000) / 1000;
-                    pesoOutrosKg += qtd * pesoIndividualKg;
+                    const pesoKg = (pesosConfigurados[chave] || 1000) / 1000;
+                    pesoOutrosKg += qtd * pesoKg;
                 }
             }
 
             const leiteUsadoOutros = pesoOutrosKg * rend;
             const leiteRestanteAlvo = Math.max(0, leiteDisp - leiteUsadoOutros);
             
-            const pesoUnidadeAlvoKg = (pesosConfigurados[alvo] || 1000) / 1000;
+            const pesoUnidadeAlvoKg = (pesosConfigurados[ultimoAlvoMarcado] || 1000) / 1000;
             const leitePorUnidadeAlvo = pesoUnidadeAlvoKg * rend;
             
             let qtdAlvoCalc = Math.floor(leiteRestanteAlvo / leitePorUnidadeAlvo);
-            if (qtdAlvoCalc > queijosConfig[alvo].max) {
-                qtdAlvoCalc = queijosConfig[alvo].max;
-            }
-            if (qtdAlvoCalc < 0) qtdAlvoCalc = 0;
+            qtdAlvoCalc = Math.max(0, Math.min(qtdAlvoCalc, queijosConfig[ultimoAlvoMarcado].max));
             
-            document.getElementById(`qtd_${alvo}`).value = qtdAlvoCalc;
+            document.getElementById(`qtd_${ultimoAlvoMarcado}`).value = qtdAlvoCalc;
         }
 
-        // 3. Calcula o balanço geral do leite com os pesos reais corretos
+        // Cálculo Geral de Leite e Peso Total Produzido
         let pesoTotalPlanejadoKg = 0;
         for (const chave in queijosConfig) {
             const qtd = parseInt(document.getElementById(`qtd_${chave}`).value) || 0;
-            const pesoIndividualKg = (pesosConfigurados[chave] || 1000) / 1000;
-            pesoTotalPlanejadoKg += qtd * pesoIndividualKg;
+            totalFormasUsadas += qtd;
+            const pesoKg = (pesosConfigurados[chave] || 1000) / 1000;
+            pesoTotalPlanejadoKg += qtd * pesoKg;
         }
 
         const leiteNecessario = pesoTotalPlanejadoKg * rend;
         const sobraLeite = leiteDisp - leiteNecessario;
+        const porcentagemUsada = leiteDisp > 0 ? (leiteNecessario / leiteDisp) * 100 : 0;
 
-        const panelStatus = document.getElementById('panel_status');
-        const lblStatus = document.getElementById('lbl_status');
+        // Atualização Visual do Dashboard
+        document.getElementById('lbl_estimativa_kg').innerText = `${pesoTotalPlanejadoKg.toFixed(1)} kg`;
+        document.getElementById('contadorFormas').innerText = `${totalFormasUsadas} molde(s) em uso`;
+        document.getElementById('lbl_tanque_total').innerText = `${leiteDisp}L Total`;
+        document.getElementById('lbl_uso_percentual').innerText = `${porcentagemUsada.toFixed(1)}% Comprometido`;
+
+        const progressBar = document.getElementById('progress_bar');
+        const lblSobra = document.getElementById('lbl_sobra_litros');
+        const lblMsg = document.getElementById('lbl_status_msg');
+        const badgeQuilosContainer = document.getElementById('badge_quilos_container');
         const lblQuilos = document.getElementById('lbl_quilos');
 
-        panelStatus.className = "status-panel"; 
+        const quilosRestantes = sobraLeite / rend;
 
-        if (sobraLeite >= 0) {
-            const quilosRestantes = sobraLeite / rend;
-            lblQuilos.innerText = `Quilos Disponíveis Restantes: ${quilosRestantes.toFixed(1)} kg`;
-        } else {
-            const quilosFaltantes = Math.abs(sobraLeite) / rend;
-            lblQuilos.innerText = `Faltam formas para: ${quilosFaltantes.toFixed(1)} kg (Excesso)`;
-        }
+        // Limita a barra visualmente a 100%
+        progressBar.style.width = `${Math.min(porcentagemUsada, 100)}%`;
 
-        if (sobraLeite > 0) {
-            lblStatus.innerText = `Sobra de leite: ${sobraLeite.toFixed(1)} Litros`;
-            panelStatus.classList.add("status-sobra");
-        } else if (Math.abs(sobraLeite) < 0.01) {
-            lblStatus.innerText = "Tanque zerado com perfeição! (0.0 L)";
-            panelStatus.classList.add("status-zerado");
+        if (sobraLeite >= 0.1) {
+            // Sobrando
+            lblSobra.innerText = sobraLeite.toFixed(1);
+            lblSobra.className = "text-4xl font-extrabold text-primary";
+            progressBar.className = "h-full progress-bar bg-primary rounded-full relative";
+            lblMsg.innerHTML = `<span class="text-primary"><i data-lucide="check-circle" class="inline w-4 h-4 mr-1"></i>Ainda há leite disponível para alocar.</span>`;
+            
+            badgeQuilosContainer.className = "inline-flex items-center gap-1.5 px-2 py-1 mt-2 bg-primary/10 text-primary rounded-md font-bold text-xs";
+            lblQuilos.innerText = `Rende + ${quilosRestantes.toFixed(1)} kg`;
+        } else if (sobraLeite > -0.1 && sobraLeite < 0.1) {
+            // Perfeito (Aceita margem de erro decimal mínima)
+            lblSobra.innerText = "0.0";
+            lblSobra.className = "text-4xl font-extrabold text-success";
+            progressBar.className = "h-full progress-bar bg-success rounded-full relative";
+            lblMsg.innerHTML = `<span class="text-success"><i data-lucide="party-popper" class="inline w-4 h-4 mr-1"></i>Tanque zerado com perfeição!</span>`;
+            
+            badgeQuilosContainer.className = "inline-flex items-center gap-1.5 px-2 py-1 mt-2 bg-success/10 text-success rounded-md font-bold text-xs";
+            lblQuilos.innerText = `Capacidade exata`;
         } else {
-            lblStatus.innerText = `Falta de leite: ${Math.abs(sobraLeite).toFixed(1)} Litros!`;
-            panelStatus.classList.add("status-falta");
+            // Faltando
+            lblSobra.innerText = Math.abs(sobraLeite).toFixed(1);
+            lblSobra.className = "text-4xl font-extrabold text-danger";
+            progressBar.className = "h-full progress-bar bg-danger rounded-full relative";
+            
+            const quilosExcesso = Math.abs(sobraLeite) / rend;
+            lblMsg.innerHTML = `<span class="text-danger"><i data-lucide="alert-triangle" class="inline w-4 h-4 mr-1"></i>Falta leite! Remova aprox. <b>${quilosExcesso.toFixed(1)} kg</b> de queijo.</span>`;
+            
+            badgeQuilosContainer.className = "inline-flex items-center gap-1.5 px-2 py-1 mt-2 bg-danger/10 text-danger rounded-md font-bold text-xs";
+            lblQuilos.innerText = `Excesso de ${quilosExcesso.toFixed(1)} kg`;
         }
+        
+        lucide.createIcons(); // Recarrega ícones injetados dinamicamente
     }
 
-    // Inicialização direta e correta
-    preencherCamposConfig();
-    atualizarCalculos();
-</script>
+    // Bootstrap
+    window.onload = inicializarUI;
 
+</script>
 </body>
 </html>
