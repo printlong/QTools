@@ -11,10 +11,10 @@
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; 
             background-color: #f4f6f8; 
             color: #333; 
-            padding: 70px 15px 20px 15px; /* Padding superior para não cobrir o header fixo */
+            padding: 70px 15px 20px 15px; 
         }
 
-        /* Header Fixo Profissional */
+        /* Header Fixo */
         .app-header {
             position: fixed;
             top: 0;
@@ -52,7 +52,7 @@
             color: #1a1a1a;
             flex-grow: 1;
             text-align: center;
-            margin-right: 44px; /* Mantém o título perfeitamente centralizado compensando o botão */
+            margin-right: 44px; 
         }
 
         /* Container Principal */
@@ -64,7 +64,7 @@
             gap: 20px; 
         }
 
-        /* Estilo de Cartões (Cards) */
+        /* Cartões */
         .card { 
             background: #ffffff; 
             border-radius: 12px; 
@@ -81,7 +81,6 @@
             padding-bottom: 10px;
         }
 
-        /* Grid para Entradas */
         .input-grid { 
             display: grid; 
             grid-template-columns: 1fr 1fr; 
@@ -99,16 +98,15 @@
             border: 1px solid #ccd0d5; 
             border-radius: 8px; 
             font-size: 1rem; 
-            transition: border-color 0.2s;
         }
         input[type="number"]:focus { border-color: #0066ff; outline: none; }
 
-        /* Painel de Status Dinâmico */
+        /* Painel de Status */
         .status-panel { 
             text-align: center; 
             padding: 25px 20px; 
             border-radius: 12px; 
-            transition: all 0.3s ease;
+            transition: all 0.2s ease;
         }
         .status-title { font-size: 1.4rem; font-weight: 700; margin-bottom: 8px; }
         .status-subtitle { font-size: 1rem; font-weight: 500; opacity: 0.9; }
@@ -117,7 +115,7 @@
         .status-falta { background-color: #fce8e6; color: #c5221f; border: 1px solid #fad2cf; }
         .status-zerado { background-color: #e8f0fe; color: #1967d2; border: 1px solid #d2e3fc; }
 
-        /* Lista de Queijos na Tela Principal */
+        /* Lista de Queijos */
         .cheese-item { 
             display: flex; 
             align-items: center; 
@@ -147,14 +145,13 @@
             cursor: pointer; 
         }
 
-        /* Controles de Quantidade (+ e -) */
+        /* Controles de Quantidade */
         .qty-controls { 
             display: flex; 
             align-items: center; 
             background: #f4f6f8; 
             border-radius: 8px; 
             padding: 4px;
-            transition: opacity 0.2s ease;
         }
         .btn-qty { 
             background: #fff; 
@@ -169,7 +166,6 @@
             display: flex; 
             align-items: center; 
             justify-content: center;
-            transition: 0.1s;
         }
         .btn-qty:active { background: #e0e0e0; }
         
@@ -184,18 +180,13 @@
             -moz-appearance: textfield; 
         }
         .qty-input:focus { outline: none; }
-        
-        .qty-input::-webkit-outer-spin-button,
-        .qty-input::-webkit-inner-spin-button {
-            -webkit-appearance: none;
-            margin: 0;
-        }
+        .qty-input::-webkit-outer-spin-button, .qty-input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
 
         /* --- MENU LATERAL (SIDEBAR) --- */
         .sidebar {
             position: fixed;
             top: 0;
-            left: -320px; /* Escondido inicialmente */
+            left: -320px; 
             width: 300px;
             height: 100%;
             background-color: #ffffff;
@@ -207,9 +198,7 @@
             padding: 20px;
         }
 
-        .sidebar.open {
-            left: 0;
-        }
+        .sidebar.open { left: 0; }
 
         .sidebar-overlay {
             position: fixed;
@@ -222,10 +211,7 @@
             display: none;
             backdrop-filter: blur(2px);
         }
-
-        .sidebar-overlay.active {
-            display: block;
-        }
+        .sidebar-overlay.active { display: block; }
 
         .sidebar-header {
             display: flex;
@@ -236,11 +222,7 @@
             border-bottom: 1px solid #f0f0f0;
         }
 
-        .sidebar-title {
-            font-size: 1.25rem;
-            font-weight: 700;
-            color: #1a1a1a;
-        }
+        .sidebar-title { font-size: 1.25rem; font-weight: 700; color: #1a1a1a; }
 
         .close-btn {
             background: none;
@@ -255,7 +237,6 @@
             align-items: center;
             justify-content: center;
         }
-        .close-btn:hover { background-color: #f0f0f0; }
 
         .config-form {
             display: flex;
@@ -263,75 +244,25 @@
             gap: 15px;
             overflow-y: auto;
             flex-grow: 1;
-            padding-right: 5px;
         }
 
-        .config-item {
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-        }
+        .config-item { display: flex; flex-direction: column; gap: 6px; }
+        .config-item label { font-size: 0.85rem; font-weight: 600; color: #555; }
+        .config-item input { padding: 10px; border: 1px solid #ddd; border-radius: 8px; font-size: 1rem; width: 100%; }
 
-        .config-item label {
-            font-size: 0.85rem;
-            font-weight: 600;
-            color: #555;
-        }
-
-        .config-item input {
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            font-size: 1rem;
-            width: 100%;
-        }
-
-        /* Botões do Menu Lateral */
-        .sidebar-actions {
-            margin-top: 20px;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-
-        .btn-primary {
-            background-color: #0066ff;
-            color: #fff;
-            border: none;
-            border-radius: 8px;
-            padding: 12px;
-            font-size: 1rem;
-            font-weight: 600;
-            cursor: pointer;
-            text-align: center;
-            transition: background-color 0.2s;
-        }
+        .sidebar-actions { margin-top: 20px; display: flex; flex-direction: column; gap: 10px; }
+        .btn-primary { background-color: #0066ff; color: #fff; border: none; border-radius: 8px; padding: 12px; font-size: 1rem; font-weight: 600; cursor: pointer; }
         .btn-primary:active { background-color: #0052cc; }
-
-        .btn-secondary {
-            background-color: #f4f6f8;
-            color: #555;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            padding: 12px;
-            font-size: 0.95rem;
-            font-weight: 600;
-            cursor: pointer;
-            text-align: center;
-            transition: background-color 0.2s;
-        }
-        .btn-secondary:active { background-color: #e4e6e8; }
+        .btn-secondary { background-color: #f4f6f8; color: #555; border: 1px solid #ddd; border-radius: 8px; padding: 12px; font-size: 0.95rem; font-weight: 600; cursor: pointer; }
     </style>
 </head>
 <body>
 
-<!-- Header Fixo Superior -->
 <header class="app-header">
     <button class="menu-btn" onclick="abrirMenu()">☰</button>
     <h1 class="app-title">Painel de Queijos</h1>
 </header>
 
-<!-- Overlay e Sidebar de Configurações -->
 <div class="sidebar-overlay" id="overlay" onclick="fecharMenu()"></div>
 <div class="sidebar" id="sidebar">
     <div class="sidebar-header">
@@ -376,9 +307,7 @@
     </div>
 </div>
 
-<!-- Layout Principal da Página -->
 <div class="container">
-    
     <div class="card">
         <div class="card-header">Configuração do Lote</div>
         <div class="input-grid">
@@ -394,21 +323,18 @@
     </div>
 
     <div class="status-panel status-sobra" id="panel_status">
-        <div class="status-title" id="lbl_status">Sobra de leite: 1500.0 Litros</div>
-        <div class="status-subtitle" id="lbl_quilos">Quilos Disponíveis Restantes: 150.0 kg</div>
+        <div class="status-title" id="lbl_status">Sobra de leite: 0.0 Litros</div>
+        <div class="status-subtitle" id="lbl_quilos">Quilos Disponíveis Restantes: 0.0 kg</div>
     </div>
 
     <div class="card">
         <div class="card-header">Produção (Selecione o Alvo)</div>
-        <div id="area_formas">
-            <!-- Gerado pelo JS -->
-        </div>
+        <div id="area_formas"></div>
     </div>
-
 </div>
 
 <script>
-    // Configurações e limites físicos das formas
+    // Configuração estrutural fixa das formas
     const queijosConfig = {
         "redonda_1kg":   { nome: "Queijo Redondo (1.0 kg)", max: 42 },
         "quadrada_05kg": { nome: "Queijo Retangular (0.5 kg)", max: 63 },
@@ -417,21 +343,21 @@
         "3kg":           { nome: "Queijo Retangular (3.0 kg)", max: 8 }
     };
 
-    // Padrões de pesos iniciais (em gramas) sugeridos por você
+    // Médias reais em gramas enviadas por você para início automático do sistema
     const pesosPadroes = {
-        "redonda_1kg": 875,     // Média entre 850 e 900
-        "quadrada_05kg": 550,   // Média entre 500 e 600
-        "1kg": 1000,            // Média entre 900 e 1100
-        "2kg": 1950,            // Média entre 1900 e 2000
-        "3kg": 2750             // Média entre 2700 e 2800 para o "quadrado de 8kg" no slot limitador
+        "redonda_1kg": 875,     
+        "quadrada_05kg": 550,   
+        "1kg": 1000,            
+        "2kg": 1950,            
+        "3kg": 2750             
     };
 
-    // Carrega pesos definidos pelo usuário da memória (localStorage) ou usa os padrões de fábrica
-    let pesosConfigurados = JSON.parse(localStorage.getItem('pesos_queijos_config')) || { ...pesosPadroes };
+    // Carrega do banco local do navegador ou assume os padrões acima
+    let pesosConfigurados = JSON.parse(localStorage.getItem('pesos_queijos_config_v2')) || { ...pesosPadroes };
 
-    let ultimoAlvoMarcado = null; // Rastreamento do alvo selecionado
+    let ultimoAlvoMarcado = null;
 
-    // Renderização dos cards de queijo na Home
+    // Renderização dos cards de queijo na tela inicial
     const areaFormas = document.getElementById('area_formas');
     for (const [chave, dados] of Object.entries(queijosConfig)) {
         areaFormas.innerHTML += `
@@ -445,7 +371,6 @@
                 </div>
                 <div class="qty-controls" id="controls_${chave}">
                     <button class="btn-qty" onclick="alterarQtd('${chave}', -1)">-</button>
-                    <!-- Inicializa diretamente no máximo disponível para agilizar o trabalho -->
                     <input type="number" class="qty-input" id="qtd_${chave}" value="${dados.max}" min="0" max="${dados.max}" 
                            oninput="validarInputManual('${chave}')" 
                            onblur="if(this.value==='') { this.value='0'; atualizarCalculos(); }" 
@@ -456,51 +381,44 @@
         `;
     }
 
-    // Inicializa os campos do formulário na gaveta lateral com os pesos salvos
     function preencherCamposConfig() {
         for (const chave in pesosConfigurados) {
-            const inputField = document.getElementById(`weight_${chave}`);
-            if (inputField) {
-                inputField.value = pesosConfigurados[chave];
-            }
+            const field = document.getElementById(`weight_${chave}`);
+            if (field) field.value = pesosConfigurados[chave];
         }
     }
 
-    // Controle da Gaveta Lateral (Menu)
     function abrirMenu() {
         preencherCamposConfig();
         document.getElementById('sidebar').classList.add('open');
         document.getElementById('overlay').classList.add('active');
     }
 
-    function fecharMenu() {
-        document.getElementById('sidebar').classList.remove('open');
-        document.getElementById('overlay').classList.remove('active');
+    styleMenu = function(open) {
+        document.getElementById('sidebar').classList[open ? 'add' : 'remove']('open');
+        document.getElementById('overlay').classList[open ? 'add' : 'remove']('active');
     }
+    function fecharMenu() { styleMenu(false); }
+    function abrirMenu() { preencherCamposConfig(); styleMenu(true); }
 
-    // Salva as alterações da Sidebar no navegador
     function salvarConfiguracoes() {
         for (const chave in pesosConfigurados) {
-            const inputField = document.getElementById(`weight_${chave}`);
-            if (inputField) {
-                const valorDigitado = parseInt(inputField.value);
-                if (valorDigitado && valorDigitado > 0) {
-                    pesosConfigurados[chave] = valorDigitado;
-                }
+            const field = document.getElementById(`weight_${chave}`);
+            if (field) {
+                const val = parseInt(field.value);
+                if (val && val > 0) pesosConfigurados[chave] = val;
             }
         }
-        localStorage.setItem('pesos_queijos_config', JSON.stringify(pesosConfigurados));
+        localStorage.setItem('pesos_queijos_config_v2', JSON.stringify(pesosConfigurados));
         fecharMenu();
         atualizarCalculos();
     }
 
-    // Retorna todos os pesos para os padrões recomendados
     function restaurarPadroes() {
         pesosConfigurados = { ...pesosPadroes };
         preencherCamposConfig();
     }
 
-    // Gerenciador de Seleção do Botão Alvo (Toggle inteligente)
     function lidarComCliqueAlvo(radio) {
         if (ultimoAlvoMarcado === radio) {
             radio.checked = false;
@@ -528,21 +446,14 @@
 
     function validarInputManual(chave) {
         const input = document.getElementById(`qtd_${chave}`);
-        
-        if (input.value === "") {
-            atualizarCalculos();
-            return;
-        }
-        
+        if (input.value === "") { atualizarCalculos(); return; }
         let valor = parseInt(input.value) || 0;
-        
         if (valor < 0) input.value = 0;
         if (valor > queijosConfig[chave].max) input.value = queijosConfig[chave].max;
-        
         atualizarCalculos();
     }
 
-    // Lógica Central de Processamento de Sobras, Pesos e Alvos
+    // LÓGICA DE CÁLCULO TOTALMENTE CORRIGIDA E SINCRONIZADA
     function atualizarCalculos() {
         const leiteDisp = parseFloat(document.getElementById('leite').value) || 0;
         const rend = parseFloat(document.getElementById('rendimento').value) || 10;
@@ -550,7 +461,7 @@
         const radioAlvo = document.querySelector('input[name="alvo"]:checked');
         const alvo = radioAlvo ? radioAlvo.value : null;
 
-        // Desativa a edição visualmente e mecanicamente no queijo alvo do cálculo automático
+        // 1. Bloqueia visualmente o campo que for o Alvo do cálculo automático
         for (const chave in queijosConfig) {
             const input = document.getElementById(`qtd_${chave}`);
             const controls = document.getElementById(`controls_${chave}`);
@@ -570,43 +481,41 @@
             }
         }
 
-        // Caso exista um alvo selecionado: realiza o cálculo de balanceamento automático por Peso Configurável
+        // 2. Se houver alvo, calcula primeiro o peso de todos os OUTROS usando o valor real de gramas
         if (alvo) {
-            let pesoOutros = 0;
+            let pesoOutrosKg = 0;
             for (const chave in queijosConfig) {
                 if (chave !== alvo) {
                     const qtd = parseInt(document.getElementById(`qtd_${chave}`).value) || 0;
-                    // Converte peso de Gramas para Quilogramas dinamicamente
-                    const pesoKg = (pesosConfigurados[chave] || 1000) / 1000;
-                    pesoOutros += qtd * pesoKg;
+                    const pesoIndividualKg = (pesosConfigurados[chave] || 1000) / 1000;
+                    pesoOutrosKg += qtd * pesoIndividualKg;
                 }
             }
 
-            const leiteUsadoOutros = pesoOutros * rend;
+            const leiteUsadoOutros = pesoOutrosKg * rend;
             const leiteRestanteAlvo = Math.max(0, leiteDisp - leiteUsadoOutros);
             
-            // Converte peso do Alvo de Gramas para Quilogramas
             const pesoUnidadeAlvoKg = (pesosConfigurados[alvo] || 1000) / 1000;
             const leitePorUnidadeAlvo = pesoUnidadeAlvoKg * rend;
             
             let qtdAlvoCalc = Math.floor(leiteRestanteAlvo / leitePorUnidadeAlvo);
-            
             if (qtdAlvoCalc > queijosConfig[alvo].max) {
                 qtdAlvoCalc = queijosConfig[alvo].max;
             }
+            if (qtdAlvoCalc < 0) qtdAlvoCalc = 0;
             
             document.getElementById(`qtd_${alvo}`).value = qtdAlvoCalc;
         }
 
-        // Cálculo Geral do Consumo Planejado do Lote
-        let pesoTotalPlanejado = 0;
+        // 3. Calcula o balanço geral do leite com os pesos reais corretos
+        let pesoTotalPlanejadoKg = 0;
         for (const chave in queijosConfig) {
             const qtd = parseInt(document.getElementById(`qtd_${chave}`).value) || 0;
-            const pesoKg = (pesosConfigurados[chave] || 1000) / 1000;
-            pesoTotalPlanejado += qtd * pesoKg;
+            const pesoIndividualKg = (pesosConfigurados[chave] || 1000) / 1000;
+            pesoTotalPlanejadoKg += qtd * pesoIndividualKg;
         }
 
-        const leiteNecessario = pesoTotalPlanejado * rend;
+        const leiteNecessario = pesoTotalPlanejadoKg * rend;
         const sobraLeite = leiteDisp - leiteNecessario;
 
         const panelStatus = document.getElementById('panel_status');
@@ -626,7 +535,7 @@
         if (sobraLeite > 0) {
             lblStatus.innerText = `Sobra de leite: ${sobraLeite.toFixed(1)} Litros`;
             panelStatus.classList.add("status-sobra");
-        } else if (sobraLeite === 0) {
+        } else if (Math.abs(sobraLeite) < 0.01) {
             lblStatus.innerText = "Tanque zerado com perfeição! (0.0 L)";
             panelStatus.classList.add("status-zerado");
         } else {
@@ -635,7 +544,7 @@
         }
     }
 
-    // Inicializa a configuração dos inputs da sidebar e roda o cálculo primário
+    // Inicialização direta e correta
     preencherCamposConfig();
     atualizarCalculos();
 </script>
