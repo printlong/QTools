@@ -112,6 +112,7 @@
             background: #f4f6f8; 
             border-radius: 8px; 
             padding: 4px;
+            transition: opacity 0.2s ease;
         }
         .btn-qty { 
             background: #fff; 
@@ -130,20 +131,18 @@
         }
         .btn-qty:active { background: #e0e0e0; }
         
-        /* --- CORREÇÃO DO BUG VISUAL AQUI --- */
         .qty-input { 
             width: 60px; 
-            padding: 0; /* Remove a margem interna excessiva */
+            padding: 0; 
             text-align: center; 
             border: none; 
             background: transparent; 
             font-weight: bold; 
             font-size: 1.2rem;
-            -moz-appearance: textfield; /* Remove setas no Firefox */
+            -moz-appearance: textfield; 
         }
         .qty-input:focus { outline: none; }
         
-        /* Remove setas nativas no Chrome, Safari, Edge e Mobile */
         .qty-input::-webkit-outer-spin-button,
         .qty-input::-webkit-inner-spin-button {
             -webkit-appearance: none;
@@ -177,7 +176,8 @@
     <div class="card">
         <div class="card-header">Produção (Selecione o Alvo)</div>
         <div id="area_formas">
-            </div>
+            <!-- Gerado pelo JS -->
+        </div>
     </div>
 
 </div>
@@ -191,20 +191,24 @@
         "3kg":           { nome: "Queijo Retangular (3.0 kg)", peso: 3.0, max: 8 }
     };
 
+    let ultimoAlvoMarcado = null; // Variável para controlar o estado do rádio botão de clique único
+
+    // Renderização dos cards de queijo
     const areaFormas = document.getElementById('area_formas');
     for (const [chave, dados] of Object.entries(queijosConfig)) {
         areaFormas.innerHTML += `
-            <div class="cheese-item">
+            <div class="cheese-item" id="item_${chave}">
                 <div class="cheese-info">
-                    <input type="radio" name="alvo" id="radio_${chave}" value="${chave}" onchange="atualizarCalculos()">
+                    <input type="radio" name="alvo" id="radio_${chave}" value="${chave}" onclick="lidarComCliqueAlvo(this)">
                     <label for="radio_${chave}">
                         ${dados.nome}
                         <span class="stock">Limite do formato: ${dados.max} un.</span>
                     </label>
                 </div>
-                <div class="qty-controls">
+                <div class="qty-controls" id="controls_${chave}">
                     <button class="btn-qty" onclick="alterarQtd('${chave}', -1)">-</button>
-                    <input type="number" class="qty-input" id="qtd_${chave}" value="0" min="0" max="${dados.max}" 
+                    <!-- Inicializa os queijos diretamente com o seu estoque máximo (dados.max) -->
+                    <input type="number" class="qty-input" id="qtd_${chave}" value="${dados.max}" min="0" max="${dados.max}" 
                            oninput="validarInputManual('${chave}')" 
                            onblur="if(this.value==='') { this.value='0'; atualizarCalculos(); }" 
                            inputmode="numeric">
@@ -214,7 +218,19 @@
         `;
     }
 
+    // Função que permite desmarcar o rádio botão (alvo) clicando nele novamente
+    function lidarComCliqueAlvo(radio) {
+        if (ultimoAlvoMarcado === radio) {
+            radio.checked = false;
+            ultimoAlvoMarcado = null;
+        } else {
+            ultimoAlvoMarcado = radio;
+        }
+        atualizarCalculos();
+    }
+
     function alterarQtd(chave, delta) {
+        // Se o queijo atual for o alvo automático do cálculo, bloqueia alteração manual
         const radioAlvo = document.querySelector('input[name="alvo"]:checked');
         if (radioAlvo && radioAlvo.value === chave) return;
 
@@ -232,7 +248,6 @@
     function validarInputManual(chave) {
         const input = document.getElementById(`qtd_${chave}`);
         
-        // Se o usuário apagar o campo todo, aguarda a nova digitação sem forçar um "0" instantâneo
         if (input.value === "") {
             atualizarCalculos();
             return;
@@ -253,6 +268,27 @@
         const radioAlvo = document.querySelector('input[name="alvo"]:checked');
         const alvo = radioAlvo ? radioAlvo.value : null;
 
+        // Atualiza a interface bloqueando/desbloqueando controles dos queijos com base no Alvo
+        for (const chave in queijosConfig) {
+            const input = document.getElementById(`qtd_${chave}`);
+            const controls = document.getElementById(`controls_${chave}`);
+            const btnMenos = controls.firstElementChild;
+            const btnMais = controls.lastElementChild;
+            
+            if (chave === alvo) {
+                input.readOnly = true;
+                controls.style.opacity = '0.5';
+                btnMenos.style.pointerEvents = 'none';
+                btnMais.style.pointerEvents = 'none';
+            } else {
+                input.readOnly = false;
+                controls.style.opacity = '1';
+                btnMenos.style.pointerEvents = 'auto';
+                btnMais.style.pointerEvents = 'auto';
+            }
+        }
+
+        // Se houver alvo selecionado, calcula a compensação
         if (alvo) {
             let pesoOutros = 0;
             for (const chave in queijosConfig) {
@@ -275,6 +311,7 @@
             document.getElementById(`qtd_${alvo}`).value = qtdAlvoCalc;
         }
 
+        // Cálculo geral do status do tanque
         let pesoTotalPlanejado = 0;
         for (const chave in queijosConfig) {
             const qtd = parseInt(document.getElementById(`qtd_${chave}`).value) || 0;
@@ -310,6 +347,7 @@
         }
     }
 
+    // Executa o cálculo inicial
     atualizarCalculos();
 </script>
 
